@@ -114,7 +114,7 @@ async function load(city) {
   document.body.classList.add('loading');
   $('wErr').hidden = $('aErr').hidden = true;
   const q = encodeURIComponent(city);
-  const [wr, ar] = await Promise.allSettled([getJSON(`/api/weather?city=${q}`), getJSON(`/api/air?city=${q}`)]);
+  const [wr, ar] = await Promise.allSettled([getJSON(`api/weather?city=${q}`), getJSON(`api/air?city=${q}`)]);
   if (id !== reqId) return; // 그 사이 다른 지역을 골랐으면 무시
   document.body.classList.remove('loading');
 
@@ -128,7 +128,13 @@ async function load(city) {
     $('verdict').className = 'verdict lv-1';
     $('vEmoji').textContent = '⚠️'; $('vTitle').textContent = '정보를 불러오지 못했어요'; $('vChips').innerHTML = '';
   }
-  $('demo').hidden = !((w && w.demo) || (a && a.demo));
+  const demo = (w && w.demo) ? w : (a && a.demo) ? a : null;
+  $('demo').hidden = !demo;
+  if (demo) {
+    $('demo').innerHTML = demo.demoReason === 'preview'
+      ? '<b>미리보기 모드</b>(SYAPP_PREVIEW=1) — 외부 API 대신 모의 데이터를 보여주고 있어요.'
+      : '지금은 <b>샘플 데이터</b>를 보여주고 있어요. 서버에 인증키(<code>WEATHER_API_KEY</code>)를 설정하면 실제 날씨가 나와요.';
+  }
 
   const parts = [];
   if (w && !w.demo) parts.push(`예보 발표 ${w.updated.slice(4, 6)}/${w.updated.slice(6, 8)} ${w.updated.slice(9, 11)}시`);
@@ -151,8 +157,16 @@ function choose(name) {
 }
 select.addEventListener('change', () => choose(select.value));
 
+// alert()는 iframe sandbox에서 막히므로 버튼 글자로 잠깐 안내
+function locateFail(msg) {
+  const btn = $('locate');
+  btn.disabled = false;
+  btn.textContent = `📍 ${msg} · 목록에서 선택`;
+  setTimeout(() => { btn.textContent = '📍 내 위치'; }, 4000);
+}
+
 $('locate').addEventListener('click', () => {
-  if (!navigator.geolocation) return alert('이 브라우저는 위치 기능을 지원하지 않아요');
+  if (!navigator.geolocation) return locateFail('위치 기능 없음');
   const btn = $('locate');
   btn.disabled = true; btn.textContent = '📍 찾는 중…';
   navigator.geolocation.getCurrentPosition(
@@ -160,7 +174,7 @@ $('locate').addEventListener('click', () => {
       btn.disabled = false; btn.textContent = '📍 내 위치';
       choose(nearestCity(p.coords.latitude, p.coords.longitude).name);
     },
-    () => { btn.disabled = false; btn.textContent = '📍 내 위치'; alert('위치를 가져오지 못했어요. 목록에서 골라주세요.'); },
+    () => locateFail('위치 사용 불가'),
     { timeout: 8000 },
   );
 });

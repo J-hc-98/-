@@ -7,11 +7,14 @@ const URL_ = 'https://apis.data.go.kr/B552584/ArpltnStatsSvc/getCtprvnMesureSido
 
 export default async function handler(req, res) {
   const city = CITIES.find((c) => c.name === req.query.city) || CITIES[0];
-  const key = process.env.SERVICE_KEY;
+  // 인증키: WEATHER_API_KEY (SYPlatform 규격). 기존 Vercel 설정 호환을 위해 SERVICE_KEY도 읽음.
+  const key = process.env.WEATHER_API_KEY || process.env.SERVICE_KEY;
+  // SYAPP_PREVIEW=1(자동 검토 환경)이면 외부 API를 부르지 않고 모의 응답 사용
+  const preview = ['1', 'true'].includes(String(process.env.SYAPP_PREVIEW || '').toLowerCase());
 
-  if (!key) {
+  if (preview || !key) {
     res.setHeader('Cache-Control', 'no-store');
-    return res.status(200).json(sampleAir(city.name));
+    return res.status(200).json({ ...sampleAir(city.name), demoReason: preview ? 'preview' : 'nokey' });
   }
 
   try {

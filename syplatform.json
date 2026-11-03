@@ -1,0 +1,9 @@
+{
+  "name": "경기도 날씨·미세먼지 (오늘 외출해도 될까?)",
+  "runtime": "node",
+  "entry": "package.json",
+  "runtimeVersion": ">=18.17.0",
+  "systemComponents": [],
+  "database": "none",
+  "healthCheck": "api/health"
+}
