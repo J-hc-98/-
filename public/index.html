@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>오늘 외출해도 될까? · 경기도 날씨</title>
+  <meta name="description" content="경기도 31개 시·군의 날씨와 미세먼지를 한눈에 보고 외출 준비물을 알려드려요." />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛅</text></svg>" />
+</head>
+<body>
+  <main class="wrap">
+    <header class="top">
+      <div>
+        <p class="eyebrow">경기도 날씨 · 미세먼지</p>
+        <h1>오늘 외출해도 될까?</h1>
+      </div>
+      <div class="controls">
+        <label class="sr-only" for="city">시·군 선택</label>
+        <select id="city"></select>
+        <button id="locate" type="button" title="내 위치로 찾기">📍 내 위치</button>
+      </div>
+    </header>
+
+    <div id="demo" class="demo" hidden>
+      지금은 <b>샘플 데이터</b>를 보여주고 있어요. 공공데이터포털 인증키를 <code>.env</code>에 넣으면 실제 날씨가 나와요.
+    </div>
+
+    <section id="verdict" class="verdict lv-0" aria-live="polite">
+      <div class="v-emoji" id="vEmoji">⏳</div>
+      <div class="v-body">
+        <p class="v-city" id="vCity">불러오는 중…</p>
+        <h2 id="vTitle">날씨를 확인하고 있어요</h2>
+        <ul class="chips" id="vChips"></ul>
+      </div>
+    </section>
+
+    <div class="grid">
+      <section class="card" id="weatherCard">
+        <h3>지금 날씨</h3>
+        <div class="now">
+          <span class="now-icon" id="nowIcon">·</span>
+          <span class="now-temp" id="nowTemp">--°</span>
+          <span class="now-sky" id="nowSky"></span>
+        </div>
+        <dl class="stats">
+          <div><dt>최저 / 최고</dt><dd id="minmax">-- / --</dd></div>
+          <div><dt>강수확률</dt><dd id="pop">--</dd></div>
+          <div><dt>습도</dt><dd id="hum">--</dd></div>
+          <div><dt>바람</dt><dd id="wind">--</dd></div>
+        </dl>
+        <p class="err" id="wErr" hidden></p>
+      </section>
+
+      <section class="card" id="airCard">
+        <h3>미세먼지</h3>
+        <div class="air">
+          <div class="air-item" id="pm10">
+            <span class="air-label">미세먼지 <small>PM10</small></span>
+            <span class="air-grade">--</span>
+            <span class="air-val">-- ㎍/㎥</span>
+            <div class="bar"><i></i></div>
+          </div>
+          <div class="air-item" id="pm25">
+            <span class="air-label">초미세먼지 <small>PM2.5</small></span>
+            <span class="air-grade">--</span>
+            <span class="air-val">-- ㎍/㎥</span>
+            <div class="bar"><i></i></div>
+          </div>
+        </div>
+        <p class="err" id="aErr" hidden></p>
+      </section>
+    </div>
+
+    <section class="card">
+      <h3>시간별 예보</h3>
+      <ol class="hours" id="hours"></ol>
+    </section>
+
+    <footer class="foot">
+      <p id="updated"></p>
+      <p>자료: 기상청 단기예보 · 한국환경공단 에어코리아 (공공데이터포털)</p>
+    </footer>
+  </main>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "name": "gg-weather",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "경기도 날씨·미세먼지 외출 가이드",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": { "node": ">=18" }
+}
